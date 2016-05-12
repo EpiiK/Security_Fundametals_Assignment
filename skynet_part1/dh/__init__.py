@@ -31,7 +31,8 @@ prime = read_hex(raw_prime)
 def create_dh_key():
     # Creates a Diffie-Hellman key
     # Returns (public, private)
-    my_private = random.randint(4, (prime - 1))
+    q = (prime - 1)/2
+    my_private = random.randint(2, q - 2)
     my_private_value = pow(2, my_private)
     my_public = pow(2, my_private, prime)
     return (my_public, my_private_value)
