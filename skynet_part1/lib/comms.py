@@ -3,6 +3,10 @@ import struct
 from Crypto.Cipher import XOR
 from Crypto.Cipher import AES
 
+from Crypto.Hash import HMAC
+from Crypto.Hash import SHA256
+
+
 from dh import create_dh_key, calculate_dh_secret
 
 class StealthConn(object):
@@ -41,6 +45,22 @@ class StealthConn(object):
         if self.cipher:
             message = pad(data)
             encrypted_data = self.cipher.encrypt(message)
+
+		iv = XOR.new(shared_hash[:4])
+		
+        self.cipher = AES.new(shared_hash[:4], AES.MODE_CBC, iv)
+		
+	def pad(s)
+		return s + b"\0" * (AES.block_size - len(s) % AES.block_size)
+
+    def send(self, data):
+        if self.cipher:
+			message = pad(data)
+            encrypted_data = self.cipher.encrypt(message)
+			#implementing message authentication using HMAC
+			hmac = HMAC.new(shared_secret, digestmod=SHA256)
+			hmac.update(encrypted_data)
+
             if self.verbose:
                 print("Original data: {}".format(data))
                 print("Encrypted data: {}".format(repr(encrypted_data)))
@@ -62,10 +82,14 @@ class StealthConn(object):
         encrypted_data = self.conn.recv(pkt_len)
         if self.cipher:
             data = self.cipher.decrypt(encrypted_data)
-            if self.verbose:
-                print("Receiving packet of length {}".format(pkt_len))
-                print("Encrypted data: {}".format(repr(encrypted_data)))
-                print("Original data: {}".format(data))
+			#check if message has been modified
+			hmac_c = HMAC.new(shared_secret, digestmod=SHA256)
+			hmac_c.update(encrypted_data)
+			if hmac.hexdigest() == hmac_c.hexdigest():
+				if self.verbose:
+					print("Receiving packet of length {}".format(pkt_len))
+					print("Encrypted data: {}".format(repr(encrypted_data)))
+					print("Original data: {}".format(data))
         else:
             data = encrypted_data
 
