@@ -34,11 +34,17 @@ class StealthConn(object):
             print("Shared hash: {}".format(shared_hash))
 
         # Default XOR algorithm can only take a key of length 32
+        # Creation of the initialisation vector using XOR algorithm and shared hash found in DH
         iv = XOR.new(shared_hash[:4])
 
-        self.cipher = AES.new(shared_hash[:4], AES.MODE_CBC, iv)
+        shared_secret = their_public_key * my_private_key
 
-    def pad(s)
+        #Cipher creation using AES mode CBC 
+        self.cipher = AES.new(shared_secret, AES.MODE_CBC, iv)
+
+
+    def pad(s):
+        # Allows for CBC to take place by padding message before encryption
         return s + b"\0" * (AES.block_size - len(s) % AES.block_size)
 
     def send(self, data):
