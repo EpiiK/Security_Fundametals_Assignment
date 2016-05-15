@@ -49,18 +49,6 @@ class StealthConn(object):
 
     def send(self, data):
         if self.cipher:
-            message = pad(data)
-            encrypted_data = self.cipher.encrypt(message)
-
-		iv = XOR.new(shared_hash[:4])
-		
-        self.cipher = AES.new(shared_hash[:4], AES.MODE_CBC, iv)
-		
-	def pad(s)
-		return s + b"\0" * (AES.block_size - len(s) % AES.block_size)
-
-    def send(self, data):
-        if self.cipher:
 			message = pad(data)
             encrypted_data = self.cipher.encrypt(message)
 			#implementing message authentication using HMAC
