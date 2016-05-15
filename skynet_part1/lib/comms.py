@@ -67,9 +67,10 @@ class StealthConn(object):
         encrypted_data = self.conn.recv(pkt_len)
         if self.cipher:
             data = self.cipher.decrypt(encrypted_data)
-			#check if message has been modified
+			#create hmac at receiving end in order to check whether the integrity has been tampered with
 			hmac_c = HMAC.new(shared_secret, digestmod=SHA256)
 			hmac_c.update(encrypted_data)
+			#check if message has been modified by comparing the hmac from the sender with hmac_c
 			if hmac.hexdigest() == hmac_c.hexdigest():
 				if self.verbose:
 					print("Receiving packet of length {}".format(pkt_len))
