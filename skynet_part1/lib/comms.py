@@ -39,7 +39,7 @@ class StealthConn(object):
         self.cipher = AES.new(shared_secret, AES.MODE_CBC, iv)
 
 
-    def pad(s)
+    def pad(s):
         # Allows for CBC to take place by padding message before encryption
         return s + b"\0" * (AES.block_size - len(s) % AES.block_size)
 
