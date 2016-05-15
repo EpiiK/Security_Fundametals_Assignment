@@ -68,11 +68,13 @@ class StealthConn(object):
         if self.cipher:
             data = self.cipher.decrypt(encrypted_data)
 			#check if message has been modified
-			
-            if self.verbose:
-                print("Receiving packet of length {}".format(pkt_len))
-                print("Encrypted data: {}".format(repr(encrypted_data)))
-                print("Original data: {}".format(data))
+			hmac_c = HMAC.new(shared_secret, digestmod=SHA256)
+			hmac_c.update(encrypted_data)
+			if hmac.hexdigest() == hmac_c.hexdigest():
+				if self.verbose:
+					print("Receiving packet of length {}".format(pkt_len))
+					print("Encrypted data: {}".format(repr(encrypted_data)))
+					print("Original data: {}".format(data))
         else:
             data = encrypted_data
 
