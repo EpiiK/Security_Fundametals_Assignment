@@ -49,11 +49,11 @@ class StealthConn(object):
 
     def send(self, data):
         if self.cipher:
-			message = pad(data)
+            message = pad(data)
             encrypted_data = self.cipher.encrypt(message)
-			#implementing message authentication using HMAC
-			hmac = HMAC.new(shared_secret, digestmod=SHA256)
-			hmac.update(encrypted_data)
+    		#implementing message authentication using HMAC
+            hmac = HMAC.new(shared_secret, digestmod=SHA256)
+            hmac.update(encrypted_data)
 
             if self.verbose:
                 print("Original data: {}".format(data))
@@ -77,13 +77,13 @@ class StealthConn(object):
         if self.cipher:
             data = self.cipher.decrypt(encrypted_data)
 			#check if message has been modified
-			hmac_c = HMAC.new(shared_secret, digestmod=SHA256)
-			hmac_c.update(encrypted_data)
-			if hmac.hexdigest() == hmac_c.hexdigest():
-				if self.verbose:
-					print("Receiving packet of length {}".format(pkt_len))
-					print("Encrypted data: {}".format(repr(encrypted_data)))
-					print("Original data: {}".format(data))
+            hmac_c = HMAC.new(shared_secret, digestmod=SHA256)
+            hmac_c.update(encrypted_data)
+            if hmac.hexdigest() == hmac_c.hexdigest():
+                if self.verbose:
+                    print("Receiving packet of length {}".format(pkt_len))
+                    print("Encrypted data: {}".format(repr(encrypted_data)))
+                    print("Original data: {}".format(data))
         else:
             data = encrypted_data
 
